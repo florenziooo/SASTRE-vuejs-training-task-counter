@@ -101,6 +101,11 @@ function removeTask(id: number) {
   tasks.value = tasks.value.filter(t => t.id !== id)
 }
 
+// EXTENSION: Clear all done
+function clearDone() {
+  tasks.value = tasks.value.filter(t => !t.done)
+}
+
 // EXTENSION: Filter bar
 const activeFilter = ref<Filter>('all')
 
@@ -122,6 +127,12 @@ const filteredTasks = computed(() => {
 
     <div class="stats">
       Total: {{ totalCount }} | Done: {{ doneCount }} | Pending: {{ pendingCount }}
+    </div>
+
+    <div class="actions-row">
+      <button class="clear-done-btn" :disabled="doneCount === 0" @click="clearDone">
+        Clear All Done
+      </button>
     </div>
 
     <div class="filter-bar">
@@ -259,5 +270,26 @@ h1 { color: #1B2A4A; margin-bottom: 20px; }
   color: white;
   border-color: #42B883;
   font-weight: bold;
+}
+
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.clear-done-btn {
+  padding: 5px 14px;
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.clear-done-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 </style>
