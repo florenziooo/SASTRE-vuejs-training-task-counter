@@ -61,16 +61,20 @@ FILE STRUCTURE (this is a single-file component)
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
+type Priority = 'low' | 'medium' | 'high'
+
 interface Task {
   id: number
   name: string
   done: boolean
+  priority: Priority
 }
 
 type Filter = 'all' | 'done' | 'pending'
 
 // TODO 1: Create a ref for the text input value (initial value: '')
 const newTaskName = ref('')
+const newTaskPriority = ref<Priority>('medium')
 
 // TODO 2: Create a ref for the tasks array (initial value: [])
 const tasks = ref<Task[]>([])
@@ -86,7 +90,7 @@ const pendingCount = computed(() => tasks.value.filter(t => !t.done).length)
 // - Clear the input
 function addTask() {
   if (!newTaskName.value.trim()) return
-  tasks.value.push({ id: Date.now(), name: newTaskName.value.trim(), done: false })
+  tasks.value.push({ id: Date.now(), name: newTaskName.value.trim(), done: false, priority: newTaskPriority.value })
   newTaskName.value = ''
 }
 
@@ -122,6 +126,11 @@ const filteredTasks = computed(() => {
 
     <div class="input-row">
       <input v-model="newTaskName" @keyup.enter="addTask" placeholder="Add a new task..." />
+      <select v-model="newTaskPriority">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
       <button @click="addTask">Add Task</button>
     </div>
 
@@ -151,7 +160,8 @@ const filteredTasks = computed(() => {
     <ul class="task-list">
       <li v-for="task in filteredTasks" :key="task.id">
         <input type="checkbox" v-model="task.done" @change="toggleTask(task.id)" />
-        <span :class="{ done: task.done }">{{ task.name }}</span>
+        <span :class="['task-name', { done: task.done }]">{{ task.name }}</span>
+        <span :class="['priority-badge', task.priority]">{{ task.priority }}</span>
         <button @click="removeTask(task.id)">Remove</button>
       </li>
     </ul>
@@ -228,7 +238,7 @@ h1 { color: #1B2A4A; margin-bottom: 20px; }
   border: 1px solid #eee;
 }
 
-.task-list li span {
+.task-list li span.task-name {
   flex: 1;
   font-size: 14px;
 }
@@ -291,5 +301,41 @@ h1 { color: #1B2A4A; margin-bottom: 20px; }
 .clear-done-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.input-row select {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.priority-badge {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.priority-badge.low {
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+.priority-badge.medium {
+  background: #fefce8;
+  color: #ca8a04;
+  border: 1px solid #fde68a;
+}
+
+.priority-badge.high {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
 }
 </style>
