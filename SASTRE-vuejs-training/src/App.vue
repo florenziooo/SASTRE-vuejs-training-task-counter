@@ -54,6 +54,8 @@ function clearDone() {
 
 <!-- Global design tokens — available to all child components via CSS variables -->
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Lato:wght@400;700&display=swap');
+
 :root {
   --brand:        #42b883;
   --brand-dark:   #2d9e6e;
@@ -89,7 +91,11 @@ function clearDone() {
 body {
   margin: 0;
   background: var(--bg);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  font-family: 'Lato';
+}
+
+h1, h2, h3 {
+  font-family: 'Montserrat';
 }
 </style>
 
