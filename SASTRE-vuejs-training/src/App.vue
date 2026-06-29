@@ -67,6 +67,8 @@ interface Task {
   done: boolean
 }
 
+type Filter = 'all' | 'done' | 'pending'
+
 // TODO 1: Create a ref for the text input value (initial value: '')
 const newTaskName = ref('')
 
@@ -98,6 +100,15 @@ function toggleTask(id: number) {
 function removeTask(id: number) {
   tasks.value = tasks.value.filter(t => t.id !== id)
 }
+
+// EXTENSION: Filter bar
+const activeFilter = ref<Filter>('all')
+
+const filteredTasks = computed(() => {
+  if (activeFilter.value === 'done')    return tasks.value.filter(t => t.done)
+  if (activeFilter.value === 'pending') return tasks.value.filter(t => !t.done)
+  return tasks.value
+})
 </script>
 
 <template>
@@ -113,10 +124,21 @@ function removeTask(id: number) {
       Total: {{ totalCount }} | Done: {{ doneCount }} | Pending: {{ pendingCount }}
     </div>
 
-    <p v-if="tasks.length === 0" class="empty">No tasks yet. Add one above!</p>
+    <div class="filter-bar">
+      <button
+        v-for="f in (['all', 'done', 'pending'] as Filter[])"
+        :key="f"
+        :class="{ active: activeFilter === f }"
+        @click="activeFilter = f as Filter"
+      >{{ f.charAt(0).toUpperCase() + f.slice(1) }}</button>
+    </div>
+
+    <p v-if="filteredTasks.length === 0" class="empty">
+      {{ tasks.length === 0 ? 'No tasks yet. Add one above!' : 'No tasks match this filter.' }}
+    </p>
 
     <ul class="task-list">
-      <li v-for="task in tasks" :key="task.id">
+      <li v-for="task in filteredTasks" :key="task.id">
         <input type="checkbox" v-model="task.done" @change="toggleTask(task.id)" />
         <span :class="{ done: task.done }">{{ task.name }}</span>
         <button @click="removeTask(task.id)">Remove</button>
@@ -214,5 +236,28 @@ h1 { color: #1B2A4A; margin-bottom: 20px; }
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.filter-bar button {
+  padding: 5px 14px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background: white;
+  color: #555;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.filter-bar button.active {
+  background: #42B883;
+  color: white;
+  border-color: #42B883;
+  font-weight: bold;
 }
 </style>
