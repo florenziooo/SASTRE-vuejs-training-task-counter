@@ -1,34 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Day1View from './views/Day1TaskCounterView.vue'
-import Day2View from './views/Day2TaskListView.vue'
-
-type Day = 'day1' | 'day2'
-const activeDay = ref<Day>('day1')
+import { useRoute } from 'vue-router'
+const route = useRoute()
 </script>
 
 <template>
   <header class="topbar">
     <span class="app-title">Vue Training</span>
     <nav class="day-tabs">
-      <button
-        :class="['tab', { active: activeDay === 'day1' }]"
-        @click="activeDay = 'day1'"
-      >
-        Day 1
-      </button>
-      <button
-        :class="['tab', { active: activeDay === 'day2' }]"
-        @click="activeDay = 'day2'"
-      >
-        Day 2
-      </button>
+      <RouterLink to="/day1" class="tab" active-class="active">Day 1</RouterLink>
+      <RouterLink to="/day2" class="tab" active-class="active">Day 2</RouterLink>
+      <RouterLink to="/day3" class="tab" active-class="active">Day 3</RouterLink>
     </nav>
   </header>
 
   <main class="app-body">
-    <Day1View v-if="activeDay === 'day1'" />
-    <Day2View v-if="activeDay === 'day2'" />
+    <RouterView v-slot="{ Component }">
+      <Transition name="fade" mode="out-in">
+        <component :is="Component" :key="route.path" />
+      </Transition>
+    </RouterView>
   </main>
 </template>
 
@@ -117,6 +107,7 @@ h1, h2, h3 {
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s;
+  text-decoration: none;
 }
 
 .tab:hover {
@@ -135,5 +126,15 @@ h1, h2, h3 {
   min-width: 500px;
   margin: 40px auto;
   padding: 0 28px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
