@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { Task, Priority, Filter } from '../types'
-import TaskInput from '../components/TaskInput.vue'
-import StatsBar from '../components/StatsBar.vue'
-import FilterBar from '../components/FilterBar.vue'
-import TaskList from '../components/TaskList.vue'
+import type { Task, Priority, Filter } from '../../types.ts'
+import TaskInput from '../../components/TaskInput.vue'
+import StatsBar from '../../components/StatsBar.vue'
+import FilterBar from '../../components/FilterBar.vue'
+import TaskList from '../../components/TaskList.vue'
 
 const tasks = ref<Task[]>([])
 const activeFilter = ref<Filter>('all')
