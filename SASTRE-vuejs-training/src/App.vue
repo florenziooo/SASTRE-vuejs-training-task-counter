@@ -1,58 +1,37 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import type { Task, Priority, Filter } from './types'
-import TaskInput from './components/TaskInput.vue'
-import StatsBar from './components/StatsBar.vue'
-import FilterBar from './components/FilterBar.vue'
-import TaskList from './components/TaskList.vue'
+import { ref } from 'vue'
+import Day1View from './views/Day1TaskCounterView.vue'
+import Day2View from './views/Day2TaskListView.vue'
 
-const tasks = ref<Task[]>([])
-const activeFilter = ref<Filter>('all')
-
-const totalCount   = computed(() => tasks.value.length)
-const doneCount    = computed(() => tasks.value.filter(t => t.done).length)
-const pendingCount = computed(() => tasks.value.filter(t => !t.done).length)
-
-const filteredTasks = computed(() => {
-  if (activeFilter.value === 'done')    return tasks.value.filter(t => t.done)
-  if (activeFilter.value === 'pending') return tasks.value.filter(t => !t.done)
-  return tasks.value
-})
-
-function addTask(name: string, priority: Priority) {
-  tasks.value.push({ id: Date.now(), name, done: false, priority })
-}
-
-function toggleTask(id: number) {
-  const task = tasks.value.find(t => t.id === id)
-  if (task) task.done = !task.done
-}
-
-function removeTask(id: number) {
-  tasks.value = tasks.value.filter(t => t.id !== id)
-}
-
-function clearDone() {
-  tasks.value = tasks.value.filter(t => !t.done)
-}
+type Day = 'day1' | 'day2'
+const activeDay = ref<Day>('day1')
 </script>
 
 <template>
-  <div class="app">
-    <h1 class="app-title">Task Counter</h1>
-    <TaskInput @add-task="addTask" />
-    <StatsBar :total="totalCount" :done="doneCount" :pending="pendingCount" />
-    <FilterBar v-model="activeFilter" :done-count="doneCount" @clear-done="clearDone" />
-    <TaskList
-      :tasks="filteredTasks"
-      :all-tasks-empty="tasks.length === 0"
-      @toggle="toggleTask"
-      @remove="removeTask"
-    />
-  </div>
+  <header class="topbar">
+    <span class="app-title">Vue Training</span>
+    <nav class="day-tabs">
+      <button
+        :class="['tab', { active: activeDay === 'day1' }]"
+        @click="activeDay = 'day1'"
+      >
+        Day 1
+      </button>
+      <button
+        :class="['tab', { active: activeDay === 'day2' }]"
+        @click="activeDay = 'day2'"
+      >
+        Day 2
+      </button>
+    </nav>
+  </header>
+
+  <main class="app-body">
+    <Day1View v-if="activeDay === 'day1'" />
+    <Day2View v-if="activeDay === 'day2'" />
+  </main>
 </template>
 
-<!-- Global design tokens — available to all child components via CSS variables -->
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Lato:wght@400;700&display=swap');
 
@@ -100,19 +79,61 @@ h1, h2, h3 {
 </style>
 
 <style scoped>
-.app {
-  max-width: 500px;
-  margin: 48px auto;
-  padding: 28px;
-  background: var(--bg);
-  border-radius: var(--radius-lg);
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 28px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .app-title {
   color: var(--text);
-  font-size: 22px;
+  font-family: 'Montserrat';
+  font-size: 16px;
   font-weight: 700;
-  margin: 0 0 20px;
   letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.day-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 5px 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'Lato';
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.tab:hover {
+  background: var(--brand-bg);
+  color: var(--brand-dark);
+  border-color: var(--brand-border);
+}
+
+.tab.active {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.app-body {
+  min-width: 500px;
+  margin: 40px auto;
+  padding: 0 28px;
 }
 </style>
