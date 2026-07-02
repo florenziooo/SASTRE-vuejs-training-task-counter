@@ -1,6 +1,20 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/stores/userStore'
+
 const route = useRoute()
+const userStore = useUserStore()
+const { currentUser, isLoggedIn } = storeToRefs(userStore)
+const nameInput = ref('')
+
+function handleLogin() {
+  if (nameInput.value.trim()) {
+    userStore.login(nameInput.value)
+    nameInput.value = ''
+  }
+}
 </script>
 
 <template>
@@ -10,7 +24,18 @@ const route = useRoute()
       <RouterLink to="/day1" class="tab" active-class="active">Day 1</RouterLink>
       <RouterLink to="/day2" class="tab" active-class="active">Day 2</RouterLink>
       <RouterLink to="/day3" class="tab" active-class="active">Day 3</RouterLink>
+      <RouterLink to="/day4" class="tab" active-class="active">Day 4</RouterLink>
     </nav>
+    <div class="user-area">
+      <template v-if="isLoggedIn">
+        <span class="user-name">👤 {{ currentUser }}</span>
+        <button class="logout-btn" @click="userStore.logout()">Logout</button>
+      </template>
+      <template v-else>
+        <input v-model="nameInput" class="login-input" placeholder="Your name…" @keyup.enter="handleLogin" />
+        <button class="login-btn" @click="handleLogin">Login</button>
+      </template>
+    </div>
   </header>
 
   <main class="app-body">
@@ -120,6 +145,57 @@ h1, h2, h3 {
   background: var(--brand);
   color: #fff;
   border-color: var(--brand);
+}
+
+.user-area {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.login-input {
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  outline: none;
+}
+
+.login-input:focus {
+  border-color: var(--brand);
+}
+
+.login-btn {
+  padding: 5px 14px;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.logout-btn {
+  padding: 5px 14px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .app-body {
