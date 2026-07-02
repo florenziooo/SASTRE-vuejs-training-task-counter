@@ -59,6 +59,7 @@ import HomeView       from '@/views/Day3/HomeView.vue'
 import TaskDetailView from '@/views/Day3/TaskDetailView.vue'
 import AboutView      from '@/views/Day3/AboutView.vue'
 import StatsView      from '@/views/Day3/StatsView.vue'
+import Day4View       from '@/views/Day4/TaskListView.vue'
 import { useTaskStore } from '@/stores/taskStore'
 
 const routes = [
@@ -70,6 +71,7 @@ const routes = [
   { path: '/day3/task/:id',   component: TaskDetailView, meta: { requiresTask: true } },
   { path: '/day3/about',      component: AboutView },
   { path: '/day3/stats',      component: StatsView },
+  { path: '/day4',            component: Day4View },
 ]
 
 const router = createRouter({
